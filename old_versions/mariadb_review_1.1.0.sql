@@ -8,16 +8,16 @@ SET SESSION SQL_LOG_BIN=OFF;
 /* Each time adds 1 minute to the run of this script. */
 /* Minimum recommended is 10. Must be at least 2 to compare with previous collection. */
 /* Disable collection of performance stats setting it to 0.*/
-set @TIMES_TO_COLLECT_PERF_STATS=10;
+set @TIMES_TO_COLLECT_PERF_STATS=2;
 
 /* DROP_OLD_SCHEMA_CREATE_NEW = NO in order to conserve data from previous runs of this script. */
 /* Conserve runs to compare separate runs. */
-set @DROP_OLD_SCHEMA_CREATE_NEW='YES';
+set @DROP_OLD_SCHEMA_CREATE_NEW='NO';
 
 
 /* -------- DO NOT MAKE CHANGES BELOW THIS LINE --------- */
 set @MARIADB_REVIEW_VERSION='1.1.0';
-set @REDO_WARNING_THRESHOLD=50;
+set @REDO_WARNING_THRESHOLD=5;
 
 delimiter //
 begin not atomic
@@ -176,7 +176,7 @@ if @IS_REPLICA = 'YES' THEN
   where COMMAND='Slave_worker';
 end if;
 
-/* GALERA */
+/* GALERA? */
 select if(VARIABLE_VALUE='Primary','YES','NO') into @IS_GALERA 
   from information_schema.global_status 
   where VARIABLE_NAME='WSREP_CLUSTER_STATUS';
@@ -495,4 +495,6 @@ end;
 delimiter ;
 
 select * from V_SERVER_STATE;
+
+
 
