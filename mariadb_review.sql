@@ -11,7 +11,7 @@ SET SESSION SQL_LOG_BIN=OFF;
 /* You can set @TIMES_TO_COLLECT_PERF_STATS to a very large number to run indefinitely. */
 /* Stop the script gracefully from a new session by updating the ID column on ITERATION table: */
 /* update ITERATION set ID=0 where 1=1; -- STOPS COLLECTING PERFORMANCE STATS AND ENDS SCRIPT PROPERLY */
-set @TIMES_TO_COLLECT_PERF_STATS=2;
+set @TIMES_TO_COLLECT_PERF_STATS=0;
 
 /* DROP_OLD_SCHEMA_CREATE_NEW = NO in order to conserve data from previous runs of this script. */
 /* Conserve runs to compare separate runs. */
@@ -293,8 +293,8 @@ if(
   ),
 if(
   sum(DATA_LENGTH + INDEX_LENGTH + DATA_FREE) < @GB_THRESHOLD,
-    concat(format(sum(DATA_LENGTH + INDEX_LENGTH + DATA_FREE)/ 1024 / 1024,0),'M'),  
-    concat(format(sum(DATA_LENGTH + INDEX_LENGTH + DATA_FREE)/ 1024 / 1024 / 1024,0),'G')
+    concat(format(sum(DATA_LENGTH + INDEX_LENGTH + DATA_FREE)/ 1024 / 1024,2),'M'),  
+    concat(format(sum(DATA_LENGTH + INDEX_LENGTH + DATA_FREE)/ 1024 / 1024 / 1024,2),'G')
   )
 from information_schema.TABLES;
 
@@ -305,8 +305,8 @@ select 1,
     'INNODB REDO LOG CAPACITY GB'
 	),
   if(@LOG_FILE_CAPACITY < @GB_THRESHOLD,
-    concat(format(@LOG_FILE_CAPACITY /1024/1024,0),'M'),
-	concat(format(@LOG_FILE_CAPACITY /1024/1024/1024,0),'G')
+    concat(format(@LOG_FILE_CAPACITY /1024/1024,2),'M'),
+	concat(format(@LOG_FILE_CAPACITY /1024/1024/1024,2),'G')
 	);
 
 insert into `SERVER_STATE` (`SECTION_ID`,`ITEM`,`STATUS`)
@@ -316,8 +316,8 @@ select 1,
     'MAX POTENTIAL MEMORY DEMAND GB'
     ),	
   if(`MAX_RAM_USAGE` < @GB_THRESHOLD,
-    concat(format(`MAX_RAM_USAGE`/1024/1024,0),'M'),
-    concat(format(`MAX_RAM_USAGE`/1024/1024/1024,0),'G')
+    concat(format(`MAX_RAM_USAGE`/1024/1024,2),'M'),
+    concat(format(`MAX_RAM_USAGE`/1024/1024/1024,2),'G')
 	)
 	from V_POTENTIAL_RAM_DEMAND 
 where MAX_RAM_USAGE is not null limit 1;
@@ -378,8 +378,8 @@ if(VARIABLE_VALUE < @GB_THRESHOLD,
   concat(VARIABLE_NAME,' GB')
   ),  
 if(VARIABLE_VALUE < @GB_THRESHOLD,
-  concat(format(VARIABLE_VALUE/1024/1024,0),'M'),
-  concat(format(VARIABLE_VALUE/1024/1024/1024,0),'G')
+  concat(format(VARIABLE_VALUE/1024/1024,2),'M'),
+  concat(format(VARIABLE_VALUE/1024/1024/1024,2),'G')
   )
 from GLOBAL_VARIABLES where VARIABLE_NAME='INNODB_BUFFER_POOL_SIZE';
 
@@ -684,8 +684,8 @@ if @TOP_MEMORY_USED is not null then
   'MEMORY USED FOR CONNECTIONS GB'
   ),
   if(@TOP_MEMORY_USED < @GB_THRESHOLD,
-    concat(format(@TOP_MEMORY_USED/1024/1024,0),'M'),
-    concat(format(@TOP_MEMORY_USED/1024/1024/1024,0),'G')
+    concat(format(@TOP_MEMORY_USED/1024/1024,2),'M'),
+    concat(format(@TOP_MEMORY_USED/1024/1024/1024,2),'G')
   )
   where @TOP_MEMORY_USED > 0;
 end if;
@@ -698,8 +698,8 @@ if @TOP_BUFFER_POOL_DATA is not null then
     'INNODB BUFFER POOL DATA GB'
 	),
   if(@TOP_BUFFER_POOL_DATA < @GB_THRESHOLD,
-    concat(format(@TOP_BUFFER_POOL_DATA/1024/1024,0),'M'), 
-    concat(format(@TOP_BUFFER_POOL_DATA/1024/1024/1024,0),'G')
+    concat(format(@TOP_BUFFER_POOL_DATA/1024/1024,2),'M'), 
+    concat(format(@TOP_BUFFER_POOL_DATA/1024/1024/1024,2),'G')
   )
   where @TOP_BUFFER_POOL_DATA > 0;
 end if;
