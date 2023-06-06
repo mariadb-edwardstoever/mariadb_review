@@ -1,0 +1,5 @@
+Mariadb Enterprise
+10.6
+
+Mariadb Community
+
