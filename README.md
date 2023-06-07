@@ -8,7 +8,7 @@ It is important that this script not replicate to a slave so that you can get in
 SET SESSION SQL_LOG_BIN=OFF;
 ```
 
-There are three ways to run this script: quick, long-term, indefinite. Edit the script and change value for @TIMES_TO_COLLECT_PERF_STATS. Each +1 added to @TIMES_TO_COLLECT_PERF_STATS will extend the total run 1 minute. For a 10 minute run, set it to 10.
+There are three ways to run this script: quick, long-term, indefinite. *Edit the script* **mariadb_review.sql** and change value for @TIMES_TO_COLLECT_PERF_STATS. Each +1 added to @TIMES_TO_COLLECT_PERF_STATS will extend the total run 1 minute. For a 10 minute run, set it to 10.
 - Quick run: Gather performance statistics for a few minutes. 
 ```
 Set @TIMES_TO_COLLECT_PERF_STATS=30;
