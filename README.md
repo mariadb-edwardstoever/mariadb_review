@@ -60,5 +60,5 @@ In long-term run, this script can collect WARNINGS such as:
 - Blocking transactions and waiting transactions
 - Transactions that cause seconds-behind-master in a replica
 - High redo occupancy
-- Excessive full table scans, lack of indexes being used
+
 
