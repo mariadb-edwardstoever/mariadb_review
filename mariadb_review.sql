@@ -11,7 +11,7 @@ SET SESSION SQL_LOG_BIN=OFF;
 /* You can set @TIMES_TO_COLLECT_PERF_STATS to a very large number to run indefinitely. */
 /* Stop the script gracefully from a new session by updating the ID column on ITERATION table: */
 /* update ITERATION set ID=0 where 1=1; -- STOPS COLLECTING PERFORMANCE STATS AND ENDS SCRIPT PROPERLY */
-set @TIMES_TO_COLLECT_PERF_STATS=30;
+set @TIMES_TO_COLLECT_PERF_STATS=1;
 
 /* DROP_OLD_SCHEMA_CREATE_NEW = NO in order to conserve data from previous runs of this script. */
 /* Conserve runs to compare separate runs. */
@@ -671,9 +671,9 @@ select max(REDO_LOG_OCCUPANCY_PCT),
        max(SLOW_QUERIES_PER_MIN),
        max(LOCK_CURRENT_WAITS),
        min((1 - (IBP_READS_PER_MIN / IBP_READ_REQUESTS_PER_MIN)) * 100),
-	   max(MEMORY_USED),
-	   max(INNODB_BUFFER_POOL_DATA),
-	   max(BINLOG_COMMITS_PER_MIN)
+       max(MEMORY_USED),
+       max(INNODB_BUFFER_POOL_DATA),
+       max(BINLOG_COMMITS_PER_MIN)
 INTO @TOP_REDO_OCPCY, @TOP_THREADS_CONNECTED, @TOP_RND_NEXT, @TOP_SELECT_MIN, @TOP_DML_MIN, @TOP_XA_COMMITS_MIN, @TOP_SLOW_QUERIES, @TOP_CURRENT_WAITS, @LOW_CACHE_HITS, @TOP_MEMORY_USED, @TOP_BUFFER_POOL_DATA, @BINLOG_COMMITS_MIN
 from V_SERVER_PERFORMANCE_PER_MIN;
 

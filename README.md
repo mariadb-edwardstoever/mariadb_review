@@ -3,12 +3,12 @@ SQL Script for Initial Review of MariaDB Server for Support tickets.
 
 This script will create a small schema of a few tables and views called "mariadb_review".
 
-It is important that this script not replicate to a slave so that you can get independant results on each server. Thus, the script is run
+It is important that this script not replicate to a slave so that you can get independant results on each server. Thus, the script is run with:
 ```
 SET SESSION SQL_LOG_BIN=OFF;
 ```
 
-There are three ways to run this script. Edit the script and change values for @TIMES_TO_COLLECT_PERF_STATS and @DROP_OLD_SCHEMA_CREATE_NEW
+There are three ways to run this script. Edit the script and change values for @TIMES_TO_COLLECT_PERF_STATS and @DROP_OLD_SCHEMA_CREATE_NEW. Each +1 added to @TIMES_TO_COLLECT_PERF_STATS will extend the total run 1 minute. For a 10 minute run, set it to 10.
 - Quick run: Gather performance statistics for a few minutes. 
 ```
 Set @TIMES_TO_COLLECT_PERF_STATS=30;
@@ -36,11 +36,27 @@ Use this syntax to launch this script in the background:
 mariadb -Ae "source /root/mariadb_review/mariadb_review.sql" > /tmp/mariadb_review.log 2>&1  & disown
 ```
 ***
-To share the results of the script with support, dump the mariadb_review schema to a SQL text file. Include your support ticket number in the file name:
+To share the results of the script with support, dump the mariadb_review schema to a SQL text file:
 ```
-mariadb-dump mariadb_review > CS0577777_mariadb_review.sql
+mariadb-dump mariadb_review > $(hostname)_mariadb_review_run_1.sql
 ```
 To drop the mariadb_review schema without effecting replication, use the script clean_up.sql
 ```
 mariadb < clean_up.sql
 ```
+***
+## What information will mariadb_review.sql script provide to MariaDB Support team?
+In a quick run, this script will provide the following to MariaDB support:
+- General information about the server
+- Topology information such as whether a server is a primary, a replica or a member of a Galera cluster.
+- A full list of global variables
+- Information about user created objects
+- basic performance data
+
+In long-term run, this script can collect WARNINGS such as:
+- Long-running transactions that do not commit
+- Blocking transactions and waiting transactions
+- Transactions that cause seconds-behind-master in a replica
+- High redo occupancy
+- Excessive full table scans, lack of indexes being used
+
