@@ -53,10 +53,10 @@ In a quick run, this script will provide the following to MariaDB support:
 - Topology information such as whether a server is a primary, a replica or a member of a Galera cluster.
 - A full list of global variables
 - Information about user created objects
-- basic performance data that can be used as a baseline
-- Empty tables with large datafiles
-- Indexes with low cardinality
-- Tables with no indexes
+- Basic performance data that can be used as a baseline
+- A list of empty tables with large datafiles
+- A list of indexes with low cardinality
+- A list of tables with no indexes
 
 In long-term run, this script can collect WARNINGS such as:
 - Long-running transactions that do not commit
