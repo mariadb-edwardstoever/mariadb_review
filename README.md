@@ -54,6 +54,9 @@ In a quick run, this script will provide the following to MariaDB support:
 - A full list of global variables
 - Information about user created objects
 - basic performance data that can be used as a baseline
+- Empty tables with large datafiles
+- Indexes with low cardinality
+- Tables with no indexes
 
 In long-term run, this script can collect WARNINGS such as:
 - Long-running transactions that do not commit
