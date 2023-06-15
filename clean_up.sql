@@ -1,9 +1,10 @@
 /* MariaDB Review */
 /* Script by Edward Stoever for MariaDB Support */
 
-/* CLEAN UP BY DROPPING THE SCHEMA mariadb_review */
-/* SESSION SQL_LOG_BIN=OFF ENSURES THIS WILL NOT REPLICATE OR EFFECT GTIDs. In almost all cases it should be OFF. */
-SET SESSION SQL_LOG_BIN=OFF;
+/* ENSURE THIS SCRIPT DOES NOT REPLICATE -- SQL_LOG_BIN=OFF and WSREP_ON=OFF */
+SET SESSION SQL_LOG_BIN=OFF; 
+/* If not Galera, WSREP_ON=OFF will have no effect. */
+SET SESSION WSREP_ON=OFF;
 
 drop schema if exists mariadb_review;
 
