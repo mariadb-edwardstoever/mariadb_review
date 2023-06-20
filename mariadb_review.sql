@@ -8,7 +8,7 @@
 /* You can set @TIMES_TO_COLLECT_PERF_STATS to a very large number to run indefinitely. */
 /* Stop the script gracefully from a new session by updating the ID column on ITERATION table: */
 /* update ITERATION set ID=0 where 1=1; -- STOPS COLLECTING PERFORMANCE STATS AND ENDS SCRIPT PROPERLY */
-set @TIMES_TO_COLLECT_PERF_STATS=2;
+set @TIMES_TO_COLLECT_PERF_STATS=10;
 
 /* DROP_OLD_SCHEMA_CREATE_NEW = NO in order to conserve data from previous runs of this script. */
 /* Conserve runs to compare separate runs. */
