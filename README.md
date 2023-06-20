@@ -31,7 +31,12 @@ This update will end the script gracefully after 1 minute and populate all of th
 ***
 Currently, the supported method is running the script as root@localhost, assuming this user has SUPER privilege.
 ***
-Use this syntax to launch this script in the background:
+For a short-term run, you can launch the script from the command-line which will provide some output for your review:
+```
+mariadb -Ae "source mariadb_review.sql"
+```
+
+For a long-term run, use this syntax to run the script in the background:
 ```
 mariadb -Ae "source /root/mariadb_review/mariadb_review.sql" > /tmp/mariadb_review.log 2>&1  & disown
 ```
