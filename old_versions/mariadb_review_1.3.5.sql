@@ -8,7 +8,7 @@
 /* You can set @TIMES_TO_COLLECT_PERF_STATS to a very large number to run indefinitely. */
 /* Stop the script gracefully from a new session by updating the ID column on ITERATION table: */
 /* update ITERATION set ID=0 where 1=1; -- STOPS COLLECTING PERFORMANCE STATS AND ENDS SCRIPT PROPERLY */
-set @TIMES_TO_COLLECT_PERF_STATS=2;
+set @TIMES_TO_COLLECT_PERF_STATS=10;
 
 /* DROP_OLD_SCHEMA_CREATE_NEW = NO in order to conserve data from previous runs of this script. */
 /* Conserve runs to compare separate runs. */
@@ -25,7 +25,7 @@ SET @MIN_ROWS_TO_CHECK_INDEX_CARDINALITY=100000;
 SET @WARN_LOW_CARDINALITY_PCT=2;
 SET @MIN_ROWS_NO_INDEX_THRESHOLD=10000;
 SET @LOW_QUERY_CACHE_HITS_THRESHOLD=10000;
-set @FORMAT_COMPRESSED_DATAFILE_THRESHOLD =(512*1024*1024);
+set @ROW_FORMAT_COMPRESSED_THRESHOLD =(512 * 1024 * 1024);
 SET @DO_NOTHING='NO'; -- SET TO YES WILL CREATE SCHEMA AND DO NOTHING ELSE. USED TO ESCAPE IF PROCESS IS ALREADY RUNNING.
 
 /* ENSURE THIS SCRIPT DOES NOT REPLICATE -- SQL_LOG_BIN=OFF and WSREP_ON=OFF */
@@ -650,7 +650,7 @@ substr(concat('ROW_FORMAT=COMPRESSED: ',TABLE_SCHEMA,'.',TABLE_NAME),1,100) as `
 from information_schema.TABLES 
 where TABLE_SCHEMA NOT IN ('information_schema','performance_schema','sys','mysql','mariadb_review') 
 and ROW_FORMAT='Compressed'
-and DATA_LENGTH+INDEX_LENGTH+DATA_FREE > @FORMAT_COMPRESSED_DATAFILE_THRESHOLD
+and DATA_LENGTH+INDEX_LENGTH+DATA_FREE > @ROW_FORMAT_COMPRESSED_THRESHOLD
 and DATA_LENGTH is not null and INDEX_LENGTH is not null and DATA_FREE is not null
 and TABLE_TYPE='BASE TABLE'
 and ENGINE='InnoDB';
