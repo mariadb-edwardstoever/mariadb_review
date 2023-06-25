@@ -23,11 +23,6 @@ set @TIMES_TO_COLLECT_PERF_STATS=(60*24*7);
 ```
 Set @TIMES_TO_COLLECT_PERF_STATS=99999999;
 ```
-You can stop any run from a separate session with this update:
-```
-update mariadb_review.ITERATION set ID=0 where 1=1;
-```
-This update will end the script gracefully after 1 minute and populate all of the values in the table SERVER_STATE.
 ***
 Currently, the supported method is running the script as root@localhost, assuming this user has SUPER privilege.
 ***
@@ -40,6 +35,12 @@ For a long-term run, use this syntax to run the script in the background:
 ```
 mariadb -Ae "source /root/mariadb_review/mariadb_review.sql" > /tmp/mariadb_review.log 2>&1  & disown
 ```
+***
+You can stop any run from a separate session by running the stop_collecting.sql script:
+```
+mariadb < stop_collecting.sql
+```
+This script will stop the collection of performance data within 1 minute.
 ***
 To share the results of the script with support, dump the mariadb_review schema to a SQL text file:
 ```
