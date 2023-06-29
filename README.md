@@ -13,6 +13,8 @@ Be aware that you will break replication and/or galera cluster if you perform
 DDL or DML on the mariadb_review schema without turning off replication in 
 your session. Avoid trouble. Use only use the provided scripts stop_collecting.sql 
 and clean_up.sql to make DDL or DML changes to the mariadb_review schema.
+
+For information about fixing this problem if it occurs, read the included file KNOWN_RISKS.md.
 ```
 
 ## SQL Script for Initial Review of MariaDB Server for Support tickets.
