@@ -1,11 +1,13 @@
 # mariadb_review
 
 ```diff
-- text in red
-+ text in green
-! text in orange
-# text in gray
-@@ text in purple (and bold)@@
+@@ Important note about Galera and Replication Topologies  @@
+
+The mariadb_review.sql script does not replicate to other instances. This ensures that the data collected for an instance remains only on that instance. This accomlished using these two commands:
+SET SESSION SQL_LOG_BIN=OFF; 
+SET SESSION WSREP_ON=OFF;
+
+Be aware that you can break replication or your cluster if you perform DDL or DML on the mariadb_review script if you do not turn off replication in your session. Use only use the provided scripts stop_collecting.sql and clean_up.sql to make changes in a replication topology.
 ```
 
 SQL Script for Initial Review of MariaDB Server for Support tickets.
