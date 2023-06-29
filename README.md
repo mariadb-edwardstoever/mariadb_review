@@ -79,12 +79,12 @@ In a quick run, this script will provide the following to MariaDB support:
 - Basic performance data that can be used as a baseline
 - A list of empty tables with large datafiles
 - A list of indexes with low cardinality
-- A list of tables with no indexes
+- A list of tables and counts of primary key, unique, and non-unique indexes
+- Statistics for tuning Galera 
 
 In long-term run, this script can collect WARNINGS such as:
 - Long-running transactions that do not commit
 - Blocking transactions and waiting transactions
 - Transactions that cause seconds-behind-master in a replica
 - High redo occupancy
-
 
