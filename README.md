@@ -9,10 +9,11 @@ Replication is disabled in the session using these two commands:
 SET SESSION SQL_LOG_BIN=OFF; 
 SET SESSION WSREP_ON=OFF;
 
-Be aware that you can break replication or your galera cluster if you perform 
+Be aware that you can break replication and/or galera cluster if you perform 
 DDL or DML on the mariadb_review schema if you do not turn off replication in 
 your session. Use only use the provided scripts stop_collecting.sql and 
-clean_up.sql to make changes in a replication topology.
+clean_up.sql to make DDL or DML changes to the mariadb_review schema 
+in a replication or Galera topology.
 ```
 
 ## SQL Script for Initial Review of MariaDB Server for Support tickets.
