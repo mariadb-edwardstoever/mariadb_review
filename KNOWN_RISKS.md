@@ -19,7 +19,7 @@ It is possible to break a slave replicating if you run DML(insert/update/delete)
 ```
 Last_SQL_Error: Error executing row event: 'Table 'mariadb_review.ITERATION' doesn't exist'
 ```
-If you break replication by running a command in the mariadb_review schema on the primary, run these commands on the slave to start replication:
+If you break replication by running a command in the mariadb_review schema on the primary, run these commands on the slave to restart replication:
 ```
 SET GLOBAL sql_slave_skip_counter = 1;
 start slave;
