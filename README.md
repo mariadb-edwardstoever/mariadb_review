@@ -15,7 +15,7 @@ your session. Use only use the provided scripts stop_collecting.sql and
 clean_up.sql to make changes in a replication topology.
 ```
 
-SQL Script for Initial Review of MariaDB Server for Support tickets.
+## SQL Script for Initial Review of MariaDB Server for Support tickets.
 
 This script will create a small schema of a few tables and views called "mariadb_review".
 
