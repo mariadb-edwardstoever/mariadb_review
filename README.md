@@ -1,4 +1,13 @@
 # mariadb_review
+
+```diff
+- text in red
++ text in green
+! text in orange
+# text in gray
+@@ text in purple (and bold)@@
+```
+
 SQL Script for Initial Review of MariaDB Server for Support tickets.
 
 This script will create a small schema of a few tables and views called "mariadb_review".
