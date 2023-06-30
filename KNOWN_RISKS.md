@@ -1,6 +1,6 @@
 # Known Risks by Running mariadb_review.sql
 
-*Avoid problems by using provided scripts stop_collecting.sql and clean_up.sql.*
+*Avoid problems by using provided scripts* `stop_collecting.sql` *and* `clean_up.sql`*.*
 
 ## Turning off Replication
 The mariadb_review.sql turns off replication by running the following commands:
