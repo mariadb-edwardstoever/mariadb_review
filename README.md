@@ -1,5 +1,7 @@
 # mariadb_review
 
+## Read these instructions carefully
+
 ```diff
 @@ Important note about Galera and Replication Topologies  @@
 
@@ -11,8 +13,9 @@ SET SESSION WSREP_ON=OFF;
 
 Be aware that you will break replication and/or galera cluster if you perform 
 DDL or DML on the mariadb_review schema without turning off replication in 
-your session. Avoid trouble. Use only use the provided scripts stop_collecting.sql 
-and clean_up.sql to make DDL or DML changes to the mariadb_review schema.
+your session. Avoid breaking replication. Use only use the provided scripts 
+stop_collecting.sql and clean_up.sql to make DDL or DML changes to the 
+mariadb_review schema.
 
 For information about fixing this problem if it occurs, read the included file KNOWN_RISKS.md.
 ```
@@ -20,11 +23,6 @@ For information about fixing this problem if it occurs, read the included file K
 ## SQL Script for Initial Review of MariaDB Server for Support tickets.
 
 This script will create a small schema of a few tables and views called "mariadb_review".
-
-It is important that this script not replicate to a slave so that you can get independent results on each server. Thus, the script is run with:
-```
-SET SESSION SQL_LOG_BIN=OFF;
-```
 
 There are three ways to run this script: quick, long-term, indefinite. *Edit the script* **mariadb_review.sql** and change value for @TIMES_TO_COLLECT_PERF_STATS. Each +1 added to @TIMES_TO_COLLECT_PERF_STATS will extend the total run 1 minute. For a 10 minute run, set it to 10.
 - Quick run: Gather performance statistics for a few minutes. 
