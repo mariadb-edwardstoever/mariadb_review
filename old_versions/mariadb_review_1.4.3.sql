@@ -7,7 +7,7 @@
 /* Disable collection of performance stats setting it to 0.*/
 /* You can set @TIMES_TO_COLLECT_PERF_STATS to a very large number to run indefinitely. */
 /* Stop the script gracefully by running the stop_collecting.sql script, example: mariadb < stop_collecting.sql */
-set @TIMES_TO_COLLECT_PERF_STATS=3;
+set @TIMES_TO_COLLECT_PERF_STATS=10;
 
 /* DROP_OLD_SCHEMA_CREATE_NEW = NO in order to conserve data from previous runs of this script. */
 /* Conserve runs to compare separate runs. */
