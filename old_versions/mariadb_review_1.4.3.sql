@@ -7,7 +7,7 @@
 /* Disable collection of performance stats setting it to 0.*/
 /* You can set @TIMES_TO_COLLECT_PERF_STATS to a very large number to run indefinitely. */
 /* Stop the script gracefully by running the stop_collecting.sql script, example: mariadb < stop_collecting.sql */
-set @TIMES_TO_COLLECT_PERF_STATS=2;
+set @TIMES_TO_COLLECT_PERF_STATS=10;
 
 /* DROP_OLD_SCHEMA_CREATE_NEW = NO in order to conserve data from previous runs of this script. */
 /* Conserve runs to compare separate runs. */
@@ -190,7 +190,7 @@ create table IF NOT EXISTS GLOBAL_VARIABLES (
   `VARIABLE_NAME` varchar(64) NOT NULL,
   `VARIABLE_VALUE` varchar(2048) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=MEMORY DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 
 CREATE VIEW IF NOT EXISTS V_POTENTIAL_RAM_DEMAND as
@@ -337,13 +337,6 @@ CREATE TABLE IF NOT EXISTS `TABLE_KEY_COUNTS` (
   `AVG_ROW_LENGTH` BIGINT(21) DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
-
-create view IF NOT EXISTS `V_TABLE_KEY_COUNTS` as
-SELECT `TABLE_SCHEMA`, `TABLE_NAME`, `PRIMARY_KEY_COUNT` as PKs,
-        `UNIQUE_KEY_COUNT` as UKs, `NON_UNIQUE_KEY_COUNT` as NON_UKs, 
-        `ROW_FORMAT`, `TABLE_ROWS`, `AVG_ROW_LENGTH`, 
-        (`TABLE_ROWS` * `AVG_ROW_LENGTH`) AS `TOTAL_ROW_BYTES`, `ENGINE`
-from TABLE_KEY_COUNTS;
 
 delimiter //
 begin not atomic
