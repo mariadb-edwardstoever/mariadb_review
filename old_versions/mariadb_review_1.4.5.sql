@@ -365,7 +365,7 @@ from TABLE_KEY_COUNTS;
 -- EXPECTED_MEMORY_PER_SESSION = maximum MEMORY_USED / THREADS_CONNECTED from STATUS
 -- SESSION_COUNT = an increasing sequence from 50 to 2000 (edit the last line to narrow the scope)
 -- EXPECTED_DEMAND_BYTES = EXPECTED_WORKING_MEMORY + (EXPECTED_MEMORY_PER_SESSION * SESSION_COUNT)
--- KEEP IN MIND: The estimate be of value when performance data was collected on an
+-- KEEP IN MIND: The estimate will prove most accurate when performance data was collected on an
 -- instance with many active sessions.
 -------------------------------------------------------------------------------------------------------
 create view IF NOT EXISTS `V_EXPECTED_RAM_DEMAND` as
