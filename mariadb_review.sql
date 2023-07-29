@@ -7,14 +7,14 @@
 /* Disable collection of performance stats setting it to 0.*/
 /* You can set @TIMES_TO_COLLECT_PERF_STATS to a very large number to run indefinitely. */
 /* Stop the script gracefully by running the stop_collecting.sql script, example: mariadb < stop_collecting.sql */
-set @TIMES_TO_COLLECT_PERF_STATS=2;
+set @TIMES_TO_COLLECT_PERF_STATS=10;
 
 /* DROP_OLD_SCHEMA_CREATE_NEW = NO in order to conserve data from previous runs of this script. */
 /* Conserve runs to compare separate runs. */
 set @DROP_OLD_SCHEMA_CREATE_NEW='YES';
 
 /* -------- DO NOT MAKE CHANGES BELOW THIS LINE --------- */
-set @MARIADB_REVIEW_VERSION='1.4.4';
+set @MARIADB_REVIEW_VERSION='1.4.5';
 set @REDO_WARNING_PCT_THRESHOLD=50;
 set @LONG_RUNNING_TRX_THRESHOLD_MINUTES = 10;
 set @LARGE_EMPTY_DATAFILE_THRESHOLD = (100 * 1024 * 1024); 
@@ -42,6 +42,17 @@ and TABLE_NAME='CURRENT_RUN';
 
 /* DO NOT TOUCH @RUNID! */
 select concat('a',substr(md5(rand()),floor(rand()*6)+1,9)) into @RUNID;
+
+delimiter //
+begin not atomic
+set @PRINCIPAL_VERSION=cast(substring_index(substring_index(version(),'.',1),'.',-1) as integer);
+set @POINT_VERSION=cast(substring_index(substring_index(version(),'.',2),'.',-1) as integer);
+if NOT @POINT_VERSION REGEXP '^[0-9]+$' then 
+  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'POINT_VERSION is not numeric.';
+end if;
+end;
+//
+delimiter ;
 
 delimiter //
 begin not atomic
@@ -345,6 +356,36 @@ SELECT `TABLE_SCHEMA`, `TABLE_NAME`, `PRIMARY_KEY_COUNT` as PKs,
         (`TABLE_ROWS` * `AVG_ROW_LENGTH`) AS `TOTAL_ROW_BYTES`, `ENGINE`
 from TABLE_KEY_COUNTS;
 
+
+-------------------------------------------------------------------------------------------------------
+-- select * from V_EXPECTED_RAM_DEMAND to estimate the expected RAM that will be used as the number of 
+-- connections rises. The formula is:
+-- EXPECTED_WORKING_MEMORY = maximum Innodb_buffer_pool_bytes_data from STATUS 
+--                           + KEY_BUFFER_SIZE + QUERY_CACHE_SIZE + INNODB_LOG_BUFFER_SIZE
+-- EXPECTED_MEMORY_PER_SESSION = maximum MEMORY_USED / THREADS_CONNECTED from STATUS
+-- SESSION_COUNT = an increasing sequence from 50 to 2000 (edit the last line to narrow the scope)
+-- EXPECTED_DEMAND_BYTES = EXPECTED_WORKING_MEMORY + (EXPECTED_MEMORY_PER_SESSION * SESSION_COUNT)
+-- KEEP IN MIND: The estimate be of value when performance data was collected on an
+-- instance with many active sessions.
+-------------------------------------------------------------------------------------------------------
+create view IF NOT EXISTS `V_EXPECTED_RAM_DEMAND` as
+WITH EXPECTED_MEMORY_USE AS (
+SELECT * FROM
+(SELECT SUM(V) AS `EXPECTED_WORKING_MEMORY` FROM (
+SELECT VARIABLE_VALUE AS `V` FROM GLOBAL_VARIABLES 
+WHERE VARIABLE_NAME IN ('KEY_BUFFER_SIZE','QUERY_CACHE_SIZE','INNODB_LOG_BUFFER_SIZE')
+UNION ALL 
+SELECT  max(INNODB_BUFFER_POOL_DATA) from V_SERVER_PERFORMANCE_PER_MIN
+) AS x ) AS `EXPECTED_WORKING_MEMORY`,
+(SELECT   round(max(MEMORY_USED/THREADS_CONNECTED)) AS `EXPECTED_MEMORY_PER_SESSION`
+from V_SERVER_PERFORMANCE_PER_MIN)  AS `EXPECTED_MEMORY_PER_SESSION`)
+SELECT EXPECTED_WORKING_MEMORY, EXPECTED_MEMORY_PER_SESSION, seq AS `SESSION_COUNT`, 
+EXPECTED_WORKING_MEMORY + (EXPECTED_MEMORY_PER_SESSION * seq)  AS `EXPECTED_DEMAND_BYTES`,
+ROUND((EXPECTED_WORKING_MEMORY + (EXPECTED_MEMORY_PER_SESSION * seq))/1024/1024)  AS `EXPECTED_DEMAND_MB`,
+ROUND((EXPECTED_WORKING_MEMORY + (EXPECTED_MEMORY_PER_SESSION * seq))/1024/1024/1024)  AS `EXPECTED_DEMAND_GB`
+FROM EXPECTED_MEMORY_USE
+JOIN seq_50_to_2000;
+
 delimiter //
 begin not atomic
 if @DO_NOTHING !='YES' THEN
@@ -402,12 +443,7 @@ select VARIABLE_VALUE into @QUERY_CACHE_SIZE
 from information_schema.GLOBAL_VARIABLES 
 where VARIABLE_NAME='QUERY_CACHE_SIZE';
 
-set @POINT_VERSION=substring_index(substring_index(version(),'.',2),'.',-1);
-if NOT @POINT_VERSION REGEXP '^[0-9]+$' then 
-  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'POINT_VERSION is not numeric.';
-end if;
-
-if @POINT_VERSION < 5 then
+if @PRINCIPAL_VERSION = 10 AND @POINT_VERSION < 5 then
   select VARIABLE_VALUE into @LOG_FILE_SIZE 
     from information_schema.global_variables 
     where VARIABLE_NAME='INNODB_LOG_FILE_SIZE';
