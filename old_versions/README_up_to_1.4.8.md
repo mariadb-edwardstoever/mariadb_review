@@ -1,13 +1,7 @@
 # mariadb_review
-## SQL Script for Initial Review of MariaDB Server for Support tickets.
 
 ## Read these instructions carefully
-To download the mariadb_review script direct to your linux server, you may use git or wget:
-```
-git https://github.com/mariadb-edwardstoever/mariadb_review.git
-wget https://github.com/mariadb-edwardstoever/mariadb_review/archive/refs/heads/main.zip
-```
-***
+
 ```diff
 @@ Important note about Galera and Replication Topologies  @@
 
@@ -26,31 +20,25 @@ mariadb_review schema.
 For information about fixing this problem if it occurs, read the included file KNOWN_RISKS.md.
 ```
 
+## SQL Script for Initial Review of MariaDB Server for Support tickets.
+
 This script will create a small schema of a few tables and views called "mariadb_review".
 
-There are three ways to run this script: quick, long-term, indefinite. *Edit the script* **mariadb_review.sql** and change value for @MINUTES_TO_COLLECT_PERF_STATS. Each +1 added to @MINUTES_TO_COLLECT_PERF_STATS will extend the total run 1 minute. For a 10 minute run, set it to 10.
+There are three ways to run this script: quick, long-term, indefinite. *Edit the script* **mariadb_review.sql** and change value for @TIMES_TO_COLLECT_PERF_STATS. Each +1 added to @TIMES_TO_COLLECT_PERF_STATS will extend the total run 1 minute. For a 10 minute run, set it to 10.
 - Quick run: Gather performance statistics for a few minutes. 
-```sql
-Set @MINUTES_TO_COLLECT_PERF_STATS=30;
+```
+Set @TIMES_TO_COLLECT_PERF_STATS=30;
 ```
 
 - Long-term run: Gather statistics for a long period. For example to run for 7 days. 
-```sql
-set @MINUTES_TO_COLLECT_PERF_STATS=(60*24*7);
+```
+set @TIMES_TO_COLLECT_PERF_STATS=(60*24*7);
 ```
 
 - Indefininte run: Gather statistics for extremely long period, and stop it when ready at some time in the future. 
-```sql
-Set @MINUTES_TO_COLLECT_PERF_STATS=99999999;
 ```
-***
-
-In most cases, collecting performace statistics once per minute is sufficient. It is useful to collect perf stats frequently when trying to trap a specific event that is visible only breifly. *Edit the script* **mariadb_review.sql** and change value for @COLLECT_PERF_STATS_PER_MINUTE to collect statistics more frequently.
-
-***
-
-If you want to conserve statistics from previous runs of the script, *Edit the script* **mariadb_review.sql** and change value @DROP_OLD_SCHEMA_CREATE_NEW to NO.
-
+Set @TIMES_TO_COLLECT_PERF_STATS=99999999;
+```
 ***
 Currently, the supported method is running the script as root@localhost, assuming this user has SUPER privilege.
 ***
@@ -96,7 +84,6 @@ In a quick run, this script will provide the following to MariaDB support:
 In long-term run, this script can collect WARNINGS such as:
 - Long-running transactions that do not commit
 - Blocking transactions and waiting transactions
-- Deadlocks
 - Transactions that cause seconds-behind-master in a replica
 - High redo occupancy
 
