@@ -4,7 +4,7 @@
 ## Read these instructions carefully
 To download the mariadb_review script direct to your linux server, you may use git or wget:
 ```
-git https://github.com/mariadb-edwardstoever/mariadb_review.git
+git clone https://github.com/mariadb-edwardstoever/mariadb_review.git
 ```
 ```
 wget https://github.com/mariadb-edwardstoever/mariadb_review/archive/refs/heads/main.zip
