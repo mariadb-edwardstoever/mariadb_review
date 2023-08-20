@@ -27,9 +27,10 @@ mariadb_review schema.
 
 For information about fixing this problem if it occurs, read the included file KNOWN_RISKS.md.
 ```
-
-This script will create a small schema of a few tables and views called "mariadb_review".
-
+***
+- This script will create a small schema of a few tables and views called "mariadb_review". 
+- This script will have a minimal impact on the server.
+***
 There are three ways to run this script: quick, long-term, indefinite. *Edit the script* **mariadb_review.sql** and change value for @MINUTES_TO_COLLECT_PERF_STATS. Each +1 added to @MINUTES_TO_COLLECT_PERF_STATS will extend the total run 1 minute. For a 10 minute run, set it to 10.
 - Quick run: Gather performance statistics for a few minutes. 
 ```sql
@@ -63,7 +64,7 @@ If you want to conserve statistics from previous runs of the script, *Edit the s
 SET DROP_OLD_SCHEMA_CREATE_NEW=NO;
 ```
 ***
-Currently, the supported method is running the script as root@localhost, assuming this user has SUPER privilege.
+Currently, the supported method for running mariadb_review.sql is as a user that has SUPER privilege. In most cases, this will be root@localhost.
 ***
 For a short-term run, you can launch the script from the command-line which will provide some output for your review:
 ```
