@@ -5,6 +5,8 @@
 To download the mariadb_review script direct to your linux server, you may use git or wget:
 ```
 git https://github.com/mariadb-edwardstoever/mariadb_review.git
+```
+```
 wget https://github.com/mariadb-edwardstoever/mariadb_review/archive/refs/heads/main.zip
 ```
 ***
@@ -31,17 +33,17 @@ This script will create a small schema of a few tables and views called "mariadb
 There are three ways to run this script: quick, long-term, indefinite. *Edit the script* **mariadb_review.sql** and change value for @MINUTES_TO_COLLECT_PERF_STATS. Each +1 added to @MINUTES_TO_COLLECT_PERF_STATS will extend the total run 1 minute. For a 10 minute run, set it to 10.
 - Quick run: Gather performance statistics for a few minutes. 
 ```sql
-Set @MINUTES_TO_COLLECT_PERF_STATS=30;
+SET @MINUTES_TO_COLLECT_PERF_STATS=30;
 ```
 
 - Long-term run: Gather statistics for a long period. For example to run for 7 days. 
 ```sql
-set @MINUTES_TO_COLLECT_PERF_STATS=(60*24*7);
+SET @MINUTES_TO_COLLECT_PERF_STATS=(60*24*7);
 ```
 
 - Indefininte run: Gather statistics for extremely long period, and stop it when ready at some time in the future. 
 ```sql
-Set @MINUTES_TO_COLLECT_PERF_STATS=99999999;
+SET @MINUTES_TO_COLLECT_PERF_STATS=99999999;
 ```
 ***
 
@@ -84,19 +86,20 @@ mariadb < clean_up.sql
 ## What information will mariadb_review.sql script provide to MariaDB Support team?
 In a quick run, this script will provide the following to MariaDB support:
 - General information about the server
-- Topology information such as whether a server is a primary, a replica or a member of a Galera cluster.
+- Topology information such as whether a server is a primary, a replica or a member of a Galera cluster
 - A full list of global variables
 - Information about user created objects
 - Basic performance data that can be used as a baseline
 - A list of empty tables with large datafiles
 - A list of indexes with low cardinality
 - A list of tables and counts of primary key, unique, and non-unique indexes
-- Statistics for tuning Galera 
+- Statistics for tuning Galera cluster
 
-In long-term run, this script can collect WARNINGS such as:
+This script will provide WARNINGS when they occur while collecting performance data, such as:
 - Long-running transactions that do not commit
 - Blocking transactions and waiting transactions
 - Deadlocks
 - Transactions that cause seconds-behind-master in a replica
+- Transactions that cause flow-control in Galera cluster
 - High redo occupancy
 
