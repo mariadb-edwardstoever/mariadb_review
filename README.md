@@ -30,6 +30,7 @@ For information about fixing this problem if it occurs, read the included file K
 ***
 - This script will create a small schema of a few tables and views called "mariadb_review". 
 - This script will have a minimal impact on the server.
+- This script can be run on MariaDB Community or Enterprise editions, 10.3 and higher.
 ***
 There are three ways to run this script: quick, long-term, indefinite. *Edit the script* **mariadb_review.sql** and change value for @MINUTES_TO_COLLECT_PERF_STATS. For a 10 minute run, set it to 10.
 - Quick run: Gather performance statistics for a few minutes. 
