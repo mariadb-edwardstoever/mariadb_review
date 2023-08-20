@@ -50,7 +50,7 @@ SET @MINUTES_TO_COLLECT_PERF_STATS=99999999;
 ```
 ***
 
-In most cases, collecting performace statistics once per minute is sufficient. It is useful to collect perf stats frequently when trying to trap a specific event that is visible only breifly. *Edit the script* **mariadb_review.sql** and change value for @COLLECT_PERF_STATS_PER_MINUTE to collect statistics more frequently.
+In most cases, collecting performace statistics once per minute is sufficient. It is useful to collect performace statistics frequently when trying to trap a specific event that is visible only breifly. *Edit the script* **mariadb_review.sql** and change value for @COLLECT_PERF_STATS_PER_MINUTE to collect statistics more frequently.
 ```sql
 -- example, collect performance statisics 10 times per minute (every 6 seconds):
 SET @COLLECT_PERF_STATS_PER_MINUTE=10;
@@ -81,7 +81,7 @@ mariadb < stop_collecting.sql
 ```
 This script will stop the collection of performance data within 1 minute.
 ***
-To share the results of the script with support, dump the mariadb_review schema to a SQL text file:
+To share the results of the script with **MariaDB Support**, dump the mariadb_review schema to a SQL text file:
 ```
 mariadb-dump mariadb_review > $(hostname)_mariadb_review_run_1.sql
 ```
@@ -93,7 +93,7 @@ mariadb < clean_up.sql
 ```
 ***
 ## What information will mariadb_review.sql script provide to MariaDB Support team?
-This script will provide the following to MariaDB support:
+This script will provide the following to **MariaDB support**:
 - General information about the server
 - Topology information such as whether a server is a primary, a replica or a member of a Galera cluster
 - A full list of global variables
