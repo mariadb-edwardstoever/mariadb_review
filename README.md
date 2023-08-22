@@ -21,7 +21,7 @@ SET SESSION WSREP_ON=OFF;
 
 Be aware that you will break replication and/or galera cluster if you perform 
 DDL or DML on the mariadb_review schema without turning off replication in 
-your session. Avoid breaking replication. Use only use the provided scripts 
+your session. Avoid breaking replication. Use only the provided scripts 
 stop_collecting.sql and clean_up.sql to make DDL or DML changes to the 
 mariadb_review schema.
 
