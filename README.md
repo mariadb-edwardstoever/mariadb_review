@@ -91,8 +91,6 @@ Compress the resulting file before attaching it to a support ticket:
 ```
 gzip $(hostname)_mariadb_review_run_1.sql
 ```
-
-You can dump the schema to SQL text file even while the script is running. The information collected up to that point can be reviewed and the script will continue.
 ***
 To safely drop the mariadb_review schema, use the script clean_up.sql. 
 ```
