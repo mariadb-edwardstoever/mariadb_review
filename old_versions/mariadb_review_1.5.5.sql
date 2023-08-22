@@ -2,7 +2,7 @@
 /* Script by Edward Stoever for MariaDB Support */
 
 /* MINUTES_TO_COLLECT_PERF_STATS is the number of minutes this script will collect performance stats and warnings */
-set @MINUTES_TO_COLLECT_PERF_STATS=2;
+set @MINUTES_TO_COLLECT_PERF_STATS=10;
 
 /* Stop the script gracefully by running the stop_collecting.sql script, example: mariadb < stop_collecting.sql */
 
@@ -981,8 +981,8 @@ if @IS_GALERA ='YES' then
   (select substring_index(VARIABLE_VALUE,'-',1) from information_schema.GLOBAL_VARIABLES where VARIABLE_NAME = 'VERSION') as MARIADB_VERSION,
   (select ifnull(substring_index(VARIABLE_VALUE,'-',1),'GALERA_NOT_RUNNING') from information_schema.GLOBAL_STATUS where VARIABLE_NAME='WSREP_PROVIDER_VERSION') as GALERA_VERSION)
   select @RUNID,@@hostname, 
-  concat('Verify that Galera version ',A.GALERA_VERSION,' matches the corresponding Mariadb Release.') as ITEM,
-  concat('Mariadb ',A.MARIADB_VERSION) as STATUS,
+  concat('Galera ',A.GALERA_VERSION,' may not match with MariaDB ', A.MARIADB_VERSION,'.') as ITEM,
+  concat('Check documentaion.') as STATUS,
   concat('Refer to https://mariadb.com/kb/en/meta/galera-versions/') as INFO  
   from VSNS A
   where not exists (select 'x' from GALERA_MARIADB_VERSIONS G where A.MARIADB_VERSION=G.mariadb_version and A.GALERA_VERSION=G.galera_version);
