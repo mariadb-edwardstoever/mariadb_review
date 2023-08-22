@@ -62,7 +62,7 @@ SET @COLLECT_PERF_STATS_PER_MINUTE=10;
 If you want to conserve statistics from previous runs of the script, *Edit the script* **mariadb_review.sql** and change value @DROP_OLD_SCHEMA_CREATE_NEW to NO.
 ```sql
 -- example, to keep previous runs of the script:
-SET DROP_OLD_SCHEMA_CREATE_NEW=NO;
+SET @DROP_OLD_SCHEMA_CREATE_NEW=NO;
 ```
 ***
 Currently, the supported method for running mariadb_review.sql is as a user that has SUPER privilege. In most cases, this will be root@localhost.
@@ -87,9 +87,14 @@ To share the results of the script with **MariaDB Support**, dump the mariadb_re
 ```
 mariadb-dump mariadb_review > $(hostname)_mariadb_review_run_1.sql
 ```
-You can dump the schema to SQL text file even while the script is running. The information collected up to that point can be reviewed and the script will continue.
+Compress the resulting file before attaching it to a support ticket:
+```
+gzip $(hostname)_mariadb_review_run_1.sql
+```
 
-To drop the mariadb_review schema without effecting replication, use the script clean_up.sql
+You can dump the schema to SQL text file even while the script is running. The information collected up to that point can be reviewed and the script will continue.
+***
+To safely drop the mariadb_review schema, use the script clean_up.sql. 
 ```
 mariadb < clean_up.sql
 ```
