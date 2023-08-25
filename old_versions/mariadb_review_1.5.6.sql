@@ -32,9 +32,9 @@ SET @GALERA_LONG_RUNNING_TXN_MS=330;
 SET @HISTORY_LIST_LENGTH_THRESHOLD=5000;
 SET @DO_NOTHING='NO'; -- SET TO YES WILL CREATE SCHEMA AND DO NOTHING ELSE. USED TO ESCAPE IF PROCESS IS ALREADY RUNNING.
 
-/* To collect processlist data, set @COLLECT_PROCESSLIST='YES'; */
-/* This could grow to an extremely large table especially if the database runs large transactions. */
-/* Use COLLECT_PROCESSLIST when MINUTES_TO_COLLECT_PERF_STATS is set low. */
+/* To collect active processlist data, set @COLLECT_PROCESSLIST='YES'; */
+/* This could grow to a very large table especially if the database runs many large queries. */
+/* Use COLLECT_PROCESSLIST with caution. Review COLLECT_PROCESSLIST in a small run first to estimate its impact. */
 set @COLLECT_PROCESSLIST='NO';
 
 /* ENSURE THIS SCRIPT DOES NOT REPLICATE -- SQL_LOG_BIN=OFF and WSREP_ON=OFF */
