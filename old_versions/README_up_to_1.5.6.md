@@ -10,22 +10,27 @@ git clone https://github.com/mariadb-edwardstoever/mariadb_review.git
 wget https://github.com/mariadb-edwardstoever/mariadb_review/archive/refs/heads/main.zip
 ```
 ***
-## Overview
-It is safe to run mariadb_review.sql when you take the following steps in order on a server:
-- run mariadb_review.sql
-- mariadb-dump the mariadb_review schema and attach the resulting sql file to your support ticket
-- run the clean_up.sql script
-- Finish these steps with one server in your topology before running mariadb_review scripts on another server
-- This script can be run on MariaDB Community or Enterprise editions, 10.3 and higher.
-***
 ```diff
-@@ About Galera and Replication  @@
-The scripts in mariadb_review take many precautions to avoid 
-breaking replication. If your topology is either master/slave 
-or Galera, please take an additional minute to read the included 
-file KNOWN_RISKS.md.
-```
+@@ Important note about Galera and Replication Topologies  @@
 
+The mariadb_review.sql script does not replicate to other instances. 
+This ensures that the data collected for an instance remains only on that instance. 
+Replication is disabled in the session using these two commands:
+SET SESSION SQL_LOG_BIN=OFF; 
+SET SESSION WSREP_ON=OFF;
+
+Be aware that you will break replication and/or galera cluster if you perform 
+DDL or DML on the mariadb_review schema without turning off replication in 
+your session. Avoid breaking replication. Use only the provided scripts 
+stop_collecting.sql and clean_up.sql to make DDL or DML changes to the 
+mariadb_review schema.
+
+For information about fixing this problem if it occurs, read the included file KNOWN_RISKS.md.
+```
+***
+- This script will create a small schema of a few tables and views called "mariadb_review". 
+- This script will have a minimal impact on the server.
+- This script can be run on MariaDB Community or Enterprise editions, 10.3 and higher.
 ***
 There are three ways to run this script: quick, long-term, indefinite. *Edit the script* **mariadb_review.sql** and change value for @MINUTES_TO_COLLECT_PERF_STATS. For a 10 minute run, set it to 10.
 - Quick run: Gather performance statistics for a few minutes. 
@@ -57,28 +62,10 @@ SET @COLLECT_PERF_STATS_PER_MINUTE=10;
 If you want to conserve statistics from previous runs of the script, *Edit the script* **mariadb_review.sql** and change value @DROP_OLD_SCHEMA_CREATE_NEW to NO.
 ```sql
 -- example, to keep previous runs of the script:
-SET @DROP_OLD_SCHEMA_CREATE_NEW='NO';
+SET @DROP_OLD_SCHEMA_CREATE_NEW=NO;
 ```
 ***
-You can create a user to run this script without SUPER privilege. An example of the minimal grant is:
-```SQL
-GRANT SELECT, INSERT, UPDATE, DELETE,
-  CREATE, ALTER, DROP, CREATE VIEW, PROCESS on *.* 
-  to `revu`@`%` identified by 'password';   
-```
-You may create a new user by editing the script create_user.sql and running it.
-```bash
-$ mariadb < create_user.sql
-```
-***
-In most cases @REPLICATE='YES' will be sufficient.
-
-If you prefer to run mariadb_review.sql using @REPLICATE='NO' on a PRIMARY/MASTER server, the user will need to have BINLOG ADMIN or SUPER privilege. To use @REPLICATE='NO' on Galera requires the SUPER privilege. There is a risk of breaking replication when using @REPLICATE='NO'. See the file KNOWN_RISKS.md for a full explanation.  
-```sql
--- example, turn off session replication :
-SET @REPLICATE='NO';
-```
-
+Currently, the supported method for running mariadb_review.sql is as a user that has SUPER privilege. In most cases, this will be root@localhost.
 ***
 For a short-term run, you can launch the script from the command-line which will provide some output for your review:
 ```
@@ -96,7 +83,6 @@ mariadb < stop_collecting.sql
 ```
 This script will stop the collection of performance data within 1 minute.
 ***
-## To Share the results with Support
 To share the results of the script with **MariaDB Support**, dump the mariadb_review schema to a SQL text file:
 ```
 mariadb-dump mariadb_review > $(hostname)_mariadb_review_run_1.sql
@@ -130,4 +116,4 @@ This script will provide WARNINGS when they occur while collecting performance d
 - Transactions that cause seconds-behind-master in a replica
 - Transactions that cause flow-control in Galera cluster
 - High redo occupancy
-- Increasing undo
+- Increasing undo 

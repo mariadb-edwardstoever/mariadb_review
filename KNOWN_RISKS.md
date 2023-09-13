@@ -1,33 +1,54 @@
 # Known Risks by Running mariadb_review.sql
 
-*Avoid problems by using provided scripts* `stop_collecting.sql` *and* `clean_up.sql`*.*
+It is safe to run mariadb_review.sql when you take the following steps in order on a server:
+- run mariadb_review.sql
+- mariadb-dump the mariadb_review schema and attach to your support ticket
+- run the clean_up.sql script
+- Finish with one server in your topology before running mariadb_review scripts on another server
 
-## Turning off Replication
-The mariadb_review.sql turns off replication by running the following commands:
+Even if you do not follow the steps above, it is unlikely to break replication because the script has safeguards built-in, *but it is possible.*
+***
+
+## Possible scenarios to break replication:
+- **On a Master**, run mariadb_review.sql with `REPLICATE='NO'` and then login without turning off replication,  (`SESSION SQL_LOG_BIN=ON`) and perform DML or DDL in the mariadb_review schema. This will attempt to replicate to the slave for a schema that does not exist on the slave.
+- **On Galera**, run mariadb_review.sql with `REPLICATE='NO'` and then login without turning off replication,  (`SESSION WSREP_ON=ON`) and perform DML or DDL in the mariadb_review schema. This will attempt to replicate to the other Galera nodes for a schema that does not exist.
+- **On a Slave**, run  mariadb_review.sql and then run  mariadb_review.sql on the master before running the clean_up.sql on the slave. Even though there are safeguards in the script that should prevent breaking replication, it may still be possible.
+
+There is little risk to running mariadb_review.sql, either REPLICATE=YES or REPLICATE=NO if the clean_up.sql script is run before any DDL (create/alter/drop) or DML (insert/update/delete) are run within the mariadb_review schema.
+
+*Avoid breaking replication by using provided scripts* `stop_collecting.sql` *and* `clean_up.sql`*. Finish with one server in your topology before running mariadb_review scripts on the next server*
+
+## Turning off Replication in the Session
+Prior to version 1.7.0, replication was turned off in the session by default. Version 1.7.0 introduces the swith @REPLICATE with a default value 'YES' to keep replication in the session ON.
+
+With @REPLICATE='NO', the mariadb_review.sql turns off replication by running the following commands:
 ```
 SET SESSION SQL_LOG_BIN=OFF;
 SET SESSION WSREP_ON=OFF;
 ```
-This is done to ensure that data collected from one instance is not confused with data collected on another instance.
+If you are not going to run this script on two or more servers at the same time, you can leave @REPLICATE='YES' as it is generally safer.
 
 ## Stand-alone Topology
-For a stand-alone server, there are no known risks to running the mariadb_review.sql script. If you want to log the commands to binary logs, comment out or remove the line `SET SESSION SQL_LOG_BIN=OFF;`.
+For a stand-alone server, there is no replication and no risks to running the mariadb_review.sql script. 
 
 
 ## Master/Slave Replication Topology
-It is possible to break a slave replicating if you run DML(insert/update/delete) or DDL(create/drop) commands on tables in the mariadb_review schema on the master without first running `SET SQL_LOG_BIN=OFF`. A typical error when reviewing slave status:
-```
-Last_SQL_Error: Error executing row event: 'Table 'mariadb_review.ITERATION' doesn't exist'
-```
-If you break replication by running a command in the mariadb_review schema on the primary, run these commands on the slave to restart replication:
-```
-SET GLOBAL sql_slave_skip_counter = 1;
+
+If you break replication, run these commands on the slave to restart the slave:
+```sql
+set global replicate_ignore_db='mariadb_review';
 start slave;
 show slave status\G
 ```
+You can then safely run the clean_up.sql script on the master. Finally, run the clean_up.sql script on the slave. If you like, you can remove the global replicate_ignore_db on the slave:
+```sql
+set global replicate_ignore_db='';
+```
 
 ## Galera Cluster Topology
-It is possible to get a node kicked from the cluster by running DML(insert/update/delete) or DDL(create/drop) commands on tables in the mariadb_review schema on any node without first running `SET SESSION WSREP_ON=OFF;`. You will see these errors:
+It is possible to get a node kicked from a Galera cluster by running DML(insert/update/delete) or DDL(create/drop) commands on tables in the mariadb_review schema if the schema was created with @REPLICATE='NO'.
+
+You will see these errors:
 ```
 MariaDB [mariadb_review]> SHOW GLOBAL STATUS LIKE 'wsrep_local_state_comment';
 +---------------------------+--------------+
@@ -51,4 +72,5 @@ root@m1:~$ mariadb -Ae "SHOW GLOBAL STATUS LIKE 'wsrep_local_state_comment';"
 +---------------------------+--------+
 root@m1:~$
 ```
+Once the node has joined the cluster, you can safely run the clean_up.sql script on the same node where mariadb_review.sql was run.
 

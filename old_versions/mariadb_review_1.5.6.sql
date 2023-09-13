@@ -2,7 +2,7 @@
 /* Script by Edward Stoever for MariaDB Support */
 
 /* MINUTES_TO_COLLECT_PERF_STATS is the number of minutes this script will collect performance stats and warnings */
-set @MINUTES_TO_COLLECT_PERF_STATS=10;
+set @MINUTES_TO_COLLECT_PERF_STATS=0;
 
 /* Stop the script gracefully by running the stop_collecting.sql script, example: mariadb < stop_collecting.sql */
 
