@@ -19,9 +19,9 @@ There is little risk to running mariadb_review.sql, either REPLICATE=YES or REPL
 *Avoid breaking replication by using provided scripts* `stop_collecting.sql` *and* `clean_up.sql`*. Finish with one server in your topology before running mariadb_review scripts on the next server*
 
 ## Turning off Replication in the Session
-Prior to version 1.7.0, replication was turned off in the session by default. Version 1.7.0 introduces the swith @REPLICATE with a default value 'YES' to keep replication in the session ON.
+Prior to version 1.7.0, replication was turned off in the session by default. Version 1.7.0 introduces the swith @REPLICATE with a default value 'YES'.
 
-With @REPLICATE='NO', the mariadb_review.sql turns off replication by running the following commands:
+With @REPLICATE='NO', the mariadb_review.sql turns off replication in the session by running the following commands:
 ```
 SET SESSION SQL_LOG_BIN=OFF;
 SET SESSION WSREP_ON=OFF;

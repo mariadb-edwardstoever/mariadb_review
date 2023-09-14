@@ -2,7 +2,11 @@
 /* Script by Edward Stoever for MariaDB Support */
 /* This script was updated at SCRIPT VERSION 1.7.0 */
 
-/* DO NOT CHAGE VALUES */
+/* If you need to override hostname check to drop schema no matter on which host it was created, */
+/* change to OVERRIDE_HOSTNAME_CHECK to 'YES'. */
+SET @OVERRIDE_HOSTNAME_CHECK='NO';
+
+/* DO NOT CHAGE VALUES BELOW THIS LINE */
 set @DO_NOTHING='NO'; -- DEFAULT
 SET @PREVIOUS_REPLICATE='YES'; -- DEFAULT
 SET @MUST_DROP='TRUE'; -- DEFAULT
@@ -11,6 +15,10 @@ SET @MUST_DROP='TRUE'; -- DEFAULT
  select if(VARIABLE_VALUE>0,'YES','NO') into @IS_PRIMARY
   from information_schema.global_status 
   where VARIABLE_NAME='SLAVES_CONNECTED';
+  
+select if(sum(VARIABLE_VALUE)>0,'YES','NO') into @IS_REPLICA
+  from information_schema.global_status 
+  where VARIABLE_NAME in ('SLAVE_RECEIVED_HEARTBEATS','RPL_SEMI_SYNC_SLAVE_SEND_ACK','SLAVES_RUNNING');
 
 select if(VARIABLE_VALUE > 0,'YES','NO') into @IS_GALERA 
   from information_schema.global_status 
@@ -55,6 +63,12 @@ delimiter ;
 
 delimiter //
 begin not atomic
+/* OVERRIDE_HOSTNAME_CHECK? */
+if @OVERRIDE_HOSTNAME_CHECK='YES' then
+  update mariadb_review.CURRENT_RUN set `RUN_ON` = @@hostname where 1=1;
+end if;
+
+
 /* IS CURRENT_RUN RECENT VERSION? */
 SET @RECENT='NO';
 select 'YES' into @RECENT from information_schema.COLUMNS 
